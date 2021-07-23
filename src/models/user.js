@@ -9,8 +9,8 @@ const bcrypt = require('bcrypt');
 const {SECRET} = process.env;
 
 const usersSchema = mongoose.Schema({
-    username: {type: String, require: true, unique: true },
-    password: {type: String, require: true},
+    username: {type: String, required: true, unique: true },
+    password: {type: String, required: true},
     role: { type: String, required: true, default: 'buyer', enum: ['buyer', 'seller'] },
     avatar: {type: String},
     date: {type: Date, default: Date.now},
@@ -21,7 +21,7 @@ const usersSchema = mongoose.Schema({
 // virtual generated token 
 usersSchema.virtual('token').get(function () {
     let tokenObj = {
-        userName: this.username
+        username: this.username
     }
 
     return jwt.sign(tokenObj, SECRET )
@@ -41,8 +41,19 @@ usersSchema.statics.authenticateBasic = async function (username, password) {
     if (valid) { return user; }
     throw new Error('Invalid User');
 }
-  
 
+// bearer auth
+usersSchema.statics.authenticateWithToken = async function (token) {
+    try {
+        const parsedToken = jwt.verify(token, SECRET);
+        const user = await this.findOne({ username: parsedToken.username })
+      if (user) { return user; }
+      throw new Error("User Not Found");
+    } catch (e) {
+      throw new Error(e.message)
+    }
+}
+  
 
 
 const usersModel = mongoose.model('user', usersSchema)
