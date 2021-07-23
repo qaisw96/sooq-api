@@ -13,7 +13,7 @@ const basicAuth = require('../middlewares/basicAuth')
 authRouter.post('/signup', handleSignUp);
 authRouter.post('/signin', basicAuth,  handleSignIn);
 
-// callback endpoints
+// callback functions 
 async function handleSignUp(req, res) {
     try {
         const user = new User(req.body)

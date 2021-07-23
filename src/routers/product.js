@@ -3,6 +3,9 @@
 const express = require('express');
 const productRouter = express.Router();
 
+// middleware 
+const bearerAuth = require('../middlewares/bearer'); 
+
 // Models
 const productsModel = require('../models/products');
 
@@ -13,14 +16,13 @@ const ModelCollection = require('../models/data-classes/data-collection');
 const productInstance = new ModelCollection(productsModel);
 
 // end points 
-productRouter.get('/product', getAllProducts);
+productRouter.get('/product', bearerAuth,  getAllProducts);
 productRouter.get('/product/:id', getOneProduct);
 productRouter.post('/product', addProduct);
 productRouter.put('/product/:id', updateProduct);
 productRouter.delete('/product/:id', deleteProduct);
 
-
-// callback endpoints
+// callback functions
 async function getAllProducts(req, res) {
     let products = await productInstance.get();
     res.status(200).json(products);

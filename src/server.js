@@ -10,6 +10,7 @@ app.use(cors());
 // call routes
 const authRouter = require('../src/routers/auth');
 const productRouter = require('../src/routers/product');
+const userRouter = require('../src/routers/user');
 
 // error handlers function
 const notFoundPage = require('../src/error-handlers/404');
@@ -21,8 +22,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // require the routes
-// app.use(authRouter);
+app.use(authRouter);
 app.use(productRouter);
+app.use(userRouter);
 
 // error middleware
 app.use('*', notFoundPage);
